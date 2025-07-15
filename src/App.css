@@ -76,18 +76,18 @@
 }
 
 .player-cell {
-  background-color: hsl(var(--primary) / 0.2);
+  background-color: hsl(var(--primary) / 20%);
   animation: pulse 2s infinite;
 }
 
 .enemy-cell {
-  background-color: hsl(var(--destructive) / 0.3);
-  animation: enemyGlow 1.5s ease-in-out infinite alternate;
+  background-color: hsl(var(--destructive) / 30%);
+  animation: enemy-glow 1.5s ease-in-out infinite alternate;
 }
 
 .boss-cell {
-  background-color: hsl(var(--accent) / 0.4);
-  animation: bossAura 2s ease-in-out infinite;
+  background-color: hsl(var(--accent) / 40%);
+  animation: boss-aura 2s ease-in-out infinite;
   border: 2px solid hsl(var(--accent));
   font-size: 1rem;
   position: relative;
@@ -100,21 +100,21 @@
   background: linear-gradient(45deg, hsl(var(--accent)), hsl(var(--primary)), hsl(var(--accent)));
   border-radius: 4px;
   z-index: -1;
-  animation: bossRotate 3s linear infinite;
+  animation: boss-rotate 3s linear infinite;
 }
 
 .treasure-cell {
-  background-color: hsl(var(--accent) / 0.3);
-  animation: treasureSparkle 2s ease-in-out infinite;
+  background-color: hsl(var(--accent) / 30%);
+  animation: treasure-sparkle 2s ease-in-out infinite;
 }
 
 .npc-cell {
-  background-color: hsl(var(--secondary) / 0.3);
+  background-color: hsl(var(--secondary) / 30%);
 }
 
 .exit-cell {
-  background-color: hsl(var(--primary) / 0.4);
-  animation: exitGlow 3s ease-in-out infinite;
+  background-color: hsl(var(--primary) / 40%);
+  animation: exit-glow 3s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -122,39 +122,41 @@
   50% { transform: scale(1.05); }
 }
 
-@keyframes enemyGlow {
-  0% { box-shadow: 0 0 5px hsl(var(--destructive) / 0.5); }
-  100% { box-shadow: 0 0 15px hsl(var(--destructive) / 0.8); }
+@keyframes enemy-glow {
+  0% { box-shadow: 0 0 5px hsl(var(--destructive) / 50%); }
+  100% { box-shadow: 0 0 15px hsl(var(--destructive) / 80%); }
 }
 
-@keyframes bossAura {
+@keyframes boss-aura {
   0%, 100% { 
-    box-shadow: 0 0 10px hsl(var(--accent) / 0.6), 0 0 20px hsl(var(--accent) / 0.4);
+    box-shadow: 0 0 10px hsl(var(--accent) / 60%), 0 0 20px hsl(var(--accent) / 40%);
     transform: scale(1);
   }
+
   50% { 
-    box-shadow: 0 0 20px hsl(var(--accent) / 0.8), 0 0 40px hsl(var(--accent) / 0.6);
+    box-shadow: 0 0 20px hsl(var(--accent) / 80%), 0 0 40px hsl(var(--accent) / 60%);
     transform: scale(1.1);
   }
 }
 
-@keyframes bossRotate {
+@keyframes boss-rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-@keyframes treasureSparkle {
+@keyframes treasure-sparkle {
   0%, 100% { 
-    box-shadow: 0 0 5px hsl(var(--accent) / 0.5);
+    box-shadow: 0 0 5px hsl(var(--accent) / 50%);
     transform: scale(1);
   }
+
   50% { 
-    box-shadow: 0 0 20px hsl(var(--accent) / 0.9);
+    box-shadow: 0 0 20px hsl(var(--accent) / 90%);
     transform: scale(1.1);
   }
 }
 
-@keyframes exitGlow {
-  0%, 100% { box-shadow: 0 0 10px hsl(var(--primary) / 0.3); }
-  50% { box-shadow: 0 0 25px hsl(var(--primary) / 0.7); }
+@keyframes exit-glow {
+  0%, 100% { box-shadow: 0 0 10px hsl(var(--primary) / 30%); }
+  50% { box-shadow: 0 0 25px hsl(var(--primary) / 70%); }
 }

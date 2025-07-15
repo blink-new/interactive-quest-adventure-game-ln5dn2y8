@@ -10,9 +10,9 @@ import {
   canMoveTo,
   calculateDamage,
   gainExperience,
-  useItem,
+  consumeItem,
   equipItem,
-  useBossAbility,
+  executeBossAbility,
   updateBossCooldowns,
   checkBossPhaseTransition,
   GRID_WIDTH,
@@ -73,7 +73,7 @@ function App() {
         gameGrid: generateGameGrid(prev.player, prev.enemies, prev.items)
       }));
     }
-  }, [gameState.player.position, gameState.enemies, gameState.items]);
+  }, [gameState.player.position, gameState.enemies, gameState.items, gameState.player]);
 
   const movePlayer = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
     if (gameState.gameStatus !== 'playing' || combatState.isActive) return;
@@ -173,7 +173,7 @@ function App() {
 
     setCombatState(prev => {
       const newLog = [...prev.combatLog];
-      let newIsPlayerTurn = false;
+      const newIsPlayerTurn = false;
       
       if (action === 'attack') {
         const damage = calculateDamage(gameState.player, prev.enemy!);
@@ -252,7 +252,7 @@ function App() {
           if (!prev.enemy || prev.enemy.health <= 0) return prev;
           
           let damage = 0;
-          let newLog = [...prev.combatLog];
+          const newLog = [...prev.combatLog];
           let updatedEnemy = { ...prev.enemy };
           
           // Check for boss phase transitions
@@ -266,7 +266,7 @@ function App() {
           
           // Boss special abilities (50% chance to use if available)
           if (updatedEnemy.isBoss && Math.random() < 0.5) {
-            const bossAction = useBossAbility(updatedEnemy);
+            const bossAction = executeBossAbility(updatedEnemy);
             if (bossAction.ability) {
               damage = bossAction.damage;
               newLog.push(bossAction.effect);
@@ -322,7 +322,7 @@ function App() {
   const handleUseItem = useCallback((item: Item) => {
     setGameState(prev => ({
       ...prev,
-      player: useItem(prev.player, item),
+      player: consumeItem(prev.player, item),
       message: `Used ${item.name}!`
     }));
   }, []);
@@ -488,17 +488,19 @@ function App() {
         </div>
 
         {/* Combat Modal */}
-        <CombatModal
-          isOpen={combatState.isActive}
-          player={gameState.player}
-          enemy={combatState.enemy!}
-          onAttack={() => handleCombatAction('attack')}
-          onDefend={() => handleCombatAction('defend')}
-          onFlee={() => handleCombatAction('flee')}
-          onClose={() => setCombatState(prev => ({ ...prev, isActive: false }))}
-          combatLog={combatState.combatLog}
-          isPlayerTurn={combatState.isPlayerTurn}
-        />
+        {combatState.isActive && combatState.enemy && (
+          <CombatModal
+            isOpen={combatState.isActive}
+            player={gameState.player}
+            enemy={combatState.enemy}
+            onAttack={() => handleCombatAction('attack')}
+            onDefend={() => handleCombatAction('defend')}
+            onFlee={() => handleCombatAction('flee')}
+            onClose={() => setCombatState(prev => ({ ...prev, isActive: false }))}
+            combatLog={combatState.combatLog}
+            isPlayerTurn={combatState.isPlayerTurn}
+          />
+        )}
       </div>
     </div>
   );

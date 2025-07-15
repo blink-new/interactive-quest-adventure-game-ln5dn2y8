@@ -376,7 +376,7 @@ export const calculateDamage = (attacker: Character | Enemy, defender: Character
   return damage;
 };
 
-export const useBossAbility = (boss: Enemy): { ability: any; damage: number; effect: string } => {
+export const executeBossAbility = (boss: Enemy): { ability: any; damage: number; effect: string } => {
   if (!boss.isBoss || !boss.specialAbilities) {
     return { ability: null, damage: 0, effect: '' };
   }
@@ -398,37 +398,44 @@ export const useBossAbility = (boss: Enemy): { ability: any; damage: number; eff
   let effect = '';
 
   switch (selectedAbility.id) {
-    case 'fire_breath':
+    case 'fire_breath': {
       damage = selectedAbility.damage || 35;
       effect = `${boss.name} breathes devastating fire!`;
       break;
-    case 'shadow_heal':
+    }
+    case 'shadow_heal': {
       const healAmount = 40;
       boss.health = Math.min(boss.maxHealth, boss.health + healAmount);
       effect = `${boss.name} regenerates ${healAmount} health with shadow magic!`;
       break;
-    case 'rage_mode':
+    }
+    case 'rage_mode': {
       boss.attack += 10;
       effect = `${boss.name} enters a berserker rage! Attack increased!`;
       break;
-    case 'death_bolt':
+    }
+    case 'death_bolt': {
       damage = selectedAbility.damage || 30;
       effect = `${boss.name} fires a bolt of necrotic energy!`;
       break;
-    case 'life_drain':
+    }
+    case 'life_drain': {
       damage = selectedAbility.damage || 20;
       const drainHeal = Math.floor(damage * 0.8);
       boss.health = Math.min(boss.maxHealth, boss.health + drainHeal);
       effect = `${boss.name} drains your life force and heals for ${drainHeal}!`;
       break;
-    case 'summon_undead':
+    }
+    case 'summon_undead': {
       boss.attack += 5;
       boss.defense += 3;
       effect = `${boss.name} summons undead minions to aid in battle!`;
       break;
-    default:
+    }
+    default: {
       damage = selectedAbility.damage || 0;
       effect = `${boss.name} uses ${selectedAbility.name}!`;
+    }
   }
 
   return { ability: selectedAbility, damage, effect };
@@ -500,7 +507,7 @@ export const gainExperience = (player: Character, amount: number): Character => 
   return newPlayer;
 };
 
-export const useItem = (player: Character, item: Item): Character => {
+export const consumeItem = (player: Character, item: Item): Character => {
   const newPlayer = { ...player };
   
   if (item.type === 'potion' && item.stats) {

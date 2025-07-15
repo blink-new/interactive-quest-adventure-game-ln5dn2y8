@@ -3,7 +3,7 @@ import { Item } from '../types/game';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Package, Sword, Shield, Potion, Gem, Key } from 'lucide-react';
+import { Package, Sword, Shield, Zap, Gem, Key } from 'lucide-react';
 
 interface InventoryProps {
   items: Item[];
@@ -19,7 +19,7 @@ const Inventory: React.FC<InventoryProps> = ({ items, onUseItem, onEquipItem }) 
       case 'armor':
         return <Shield className="w-4 h-4" />;
       case 'potion':
-        return <Potion className="w-4 h-4" />;
+        return <Zap className="w-4 h-4" />;
       case 'treasure':
         return <Gem className="w-4 h-4" />;
       case 'key':
