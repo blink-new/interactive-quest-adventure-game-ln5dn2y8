@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 45 93% 47%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+
+    font-family: Inter, sans-serif;
+  }
+  
+  .font-fantasy {
+    font-family: Cinzel, serif;
+  }
+}
+
+@layer components {
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    gap: 1px;
+    background: #1e293b;
+    border: 2px solid #475569;
+  }
+  
+  .game-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+  }
+  
+  .player-cell {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgb(139 92 246 / 50%);
+  }
+  
+  .enemy-cell {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    animation: pulse 2s infinite;
+  }
+  
+  .treasure-cell {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: #92400e;
+    animation: sparkle 1.5s infinite;
+  }
+  
+  .wall-cell {
+    background: #374151;
+    color: #6b7280;
+  }
+  
+  .empty-cell {
+    background: #0f172a;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 100%; }
+    50% { opacity: 70%; }
+  }
+  
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  .stat-bar {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #374151;
+  }
+  
+  .health-bar {
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .mana-bar {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .xp-bar {
+    background: linear-gradient(90deg, #059669, #10b981);
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+}
