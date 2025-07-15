@@ -63,6 +63,98 @@ export const createInitialEnemies = (): Enemy[] => [
     loot: [
       { id: 'potion1', name: 'Health Potion', type: 'potion', description: 'Restores 50 HP', value: 30, stats: { health: 50 }, quantity: 1 }
     ]
+  },
+  // BOSS: Shadow Dragon
+  {
+    id: 'boss1',
+    name: 'Shadow Dragon',
+    health: 200,
+    maxHealth: 200,
+    attack: 25,
+    defense: 8,
+    position: { x: 18, y: 2 },
+    experience: 150,
+    gold: 100,
+    isBoss: true,
+    bossPhase: 1,
+    maxPhases: 3,
+    specialAbilities: [
+      {
+        id: 'fire_breath',
+        name: 'Fire Breath',
+        description: 'Unleashes devastating flames',
+        damage: 35,
+        cooldown: 3,
+        currentCooldown: 0
+      },
+      {
+        id: 'shadow_heal',
+        name: 'Shadow Regeneration',
+        description: 'Heals using dark magic',
+        effect: 'heal',
+        cooldown: 4,
+        currentCooldown: 0
+      },
+      {
+        id: 'rage_mode',
+        name: 'Draconic Rage',
+        description: 'Enters a berserker state',
+        effect: 'rage',
+        cooldown: 5,
+        currentCooldown: 0
+      }
+    ],
+    loot: [
+      { id: 'dragon_sword', name: 'Dragonslayer Blade', type: 'weapon', description: 'A legendary sword forged from dragon scales', value: 200, stats: { attack: 20 } },
+      { id: 'dragon_armor', name: 'Dragon Scale Armor', type: 'armor', description: 'Armor crafted from ancient dragon scales', value: 250, stats: { defense: 15 } },
+      { id: 'boss_potion', name: 'Dragon\'s Elixir', type: 'potion', description: 'Permanently increases max health', value: 100, stats: { health: 100 }, quantity: 1 }
+    ]
+  },
+  // BOSS: Lich King
+  {
+    id: 'boss2',
+    name: 'Lich King',
+    health: 180,
+    maxHealth: 180,
+    attack: 22,
+    defense: 10,
+    position: { x: 2, y: 13 },
+    experience: 120,
+    gold: 80,
+    isBoss: true,
+    bossPhase: 1,
+    maxPhases: 2,
+    specialAbilities: [
+      {
+        id: 'death_bolt',
+        name: 'Death Bolt',
+        description: 'Fires a bolt of necrotic energy',
+        damage: 30,
+        cooldown: 2,
+        currentCooldown: 0
+      },
+      {
+        id: 'life_drain',
+        name: 'Life Drain',
+        description: 'Drains life force to heal',
+        damage: 20,
+        effect: 'heal',
+        cooldown: 4,
+        currentCooldown: 0
+      },
+      {
+        id: 'summon_undead',
+        name: 'Summon Undead',
+        description: 'Raises skeletal minions',
+        effect: 'buff',
+        cooldown: 6,
+        currentCooldown: 0
+      }
+    ],
+    loot: [
+      { id: 'lich_staff', name: 'Staff of Necromancy', type: 'weapon', description: 'A staff pulsing with dark magic', value: 180, stats: { attack: 18 } },
+      { id: 'lich_robe', name: 'Robes of the Undead', type: 'armor', description: 'Dark robes that whisper ancient secrets', value: 200, stats: { defense: 12 } }
+    ]
   }
 ];
 
@@ -140,6 +232,56 @@ export const createInitialQuests = (): Quest[] => [
     },
     status: 'active',
     isMainQuest: false
+  },
+  {
+    id: 'boss1_quest',
+    title: 'Dragonslayer',
+    description: 'Face the mighty Shadow Dragon and prove your worth as a true hero',
+    objectives: [
+      {
+        id: 'obj3',
+        description: 'Defeat the Shadow Dragon',
+        type: 'kill',
+        target: 'boss1',
+        current: 0,
+        required: 1,
+        completed: false
+      }
+    ],
+    rewards: {
+      experience: 300,
+      gold: 500,
+      items: [
+        { id: 'dragon_title', name: 'Dragonslayer Title', type: 'treasure', description: 'A legendary title proving your dragon-slaying prowess', value: 1000 }
+      ]
+    },
+    status: 'active',
+    isMainQuest: true
+  },
+  {
+    id: 'boss2_quest',
+    title: 'Undead Nemesis',
+    description: 'Banish the Lich King back to the realm of the dead',
+    objectives: [
+      {
+        id: 'obj4',
+        description: 'Defeat the Lich King',
+        type: 'kill',
+        target: 'boss2',
+        current: 0,
+        required: 1,
+        completed: false
+      }
+    ],
+    rewards: {
+      experience: 250,
+      gold: 400,
+      items: [
+        { id: 'lich_bane', name: 'Lich Bane Amulet', type: 'treasure', description: 'An amulet that protects against undead magic', value: 800 }
+      ]
+    },
+    status: 'active',
+    isMainQuest: true
   }
 ];
 
@@ -232,6 +374,110 @@ export const calculateDamage = (attacker: Character | Enemy, defender: Character
   const defense = defender.defense;
   const damage = Math.max(1, baseDamage - defense + Math.floor(Math.random() * 5));
   return damage;
+};
+
+export const useBossAbility = (boss: Enemy): { ability: any; damage: number; effect: string } => {
+  if (!boss.isBoss || !boss.specialAbilities) {
+    return { ability: null, damage: 0, effect: '' };
+  }
+
+  // Find available abilities (not on cooldown)
+  const availableAbilities = boss.specialAbilities.filter(ability => ability.currentCooldown === 0);
+  
+  if (availableAbilities.length === 0) {
+    return { ability: null, damage: 0, effect: '' };
+  }
+
+  // Select random available ability
+  const selectedAbility = availableAbilities[Math.floor(Math.random() * availableAbilities.length)];
+  
+  // Set cooldown
+  selectedAbility.currentCooldown = selectedAbility.cooldown;
+  
+  let damage = 0;
+  let effect = '';
+
+  switch (selectedAbility.id) {
+    case 'fire_breath':
+      damage = selectedAbility.damage || 35;
+      effect = `${boss.name} breathes devastating fire!`;
+      break;
+    case 'shadow_heal':
+      const healAmount = 40;
+      boss.health = Math.min(boss.maxHealth, boss.health + healAmount);
+      effect = `${boss.name} regenerates ${healAmount} health with shadow magic!`;
+      break;
+    case 'rage_mode':
+      boss.attack += 10;
+      effect = `${boss.name} enters a berserker rage! Attack increased!`;
+      break;
+    case 'death_bolt':
+      damage = selectedAbility.damage || 30;
+      effect = `${boss.name} fires a bolt of necrotic energy!`;
+      break;
+    case 'life_drain':
+      damage = selectedAbility.damage || 20;
+      const drainHeal = Math.floor(damage * 0.8);
+      boss.health = Math.min(boss.maxHealth, boss.health + drainHeal);
+      effect = `${boss.name} drains your life force and heals for ${drainHeal}!`;
+      break;
+    case 'summon_undead':
+      boss.attack += 5;
+      boss.defense += 3;
+      effect = `${boss.name} summons undead minions to aid in battle!`;
+      break;
+    default:
+      damage = selectedAbility.damage || 0;
+      effect = `${boss.name} uses ${selectedAbility.name}!`;
+  }
+
+  return { ability: selectedAbility, damage, effect };
+};
+
+export const updateBossCooldowns = (boss: Enemy): Enemy => {
+  if (!boss.isBoss || !boss.specialAbilities) return boss;
+
+  const updatedBoss = { ...boss };
+  updatedBoss.specialAbilities = boss.specialAbilities.map(ability => ({
+    ...ability,
+    currentCooldown: Math.max(0, ability.currentCooldown - 1)
+  }));
+
+  return updatedBoss;
+};
+
+export const checkBossPhaseTransition = (boss: Enemy): Enemy => {
+  if (!boss.isBoss || !boss.maxPhases || !boss.bossPhase) return boss;
+
+  const healthPercentage = (boss.health / boss.maxHealth) * 100;
+  const updatedBoss = { ...boss };
+
+  // Phase transitions at 66% and 33% health
+  if (healthPercentage <= 66 && boss.bossPhase === 1) {
+    updatedBoss.bossPhase = 2;
+    updatedBoss.attack += 5;
+    updatedBoss.defense += 2;
+    // Reset all ability cooldowns for phase transition
+    if (updatedBoss.specialAbilities) {
+      updatedBoss.specialAbilities = updatedBoss.specialAbilities.map(ability => ({
+        ...ability,
+        currentCooldown: 0
+      }));
+    }
+  } else if (healthPercentage <= 33 && boss.bossPhase === 2 && boss.maxPhases >= 3) {
+    updatedBoss.bossPhase = 3;
+    updatedBoss.attack += 8;
+    updatedBoss.defense += 3;
+    // Reset all ability cooldowns for final phase
+    if (updatedBoss.specialAbilities) {
+      updatedBoss.specialAbilities = updatedBoss.specialAbilities.map(ability => ({
+        ...ability,
+        currentCooldown: Math.max(0, ability.cooldown - 1) // Reduced cooldowns in final phase
+      }));
+    }
+  }
+
+  return updatedBoss;
 };
 
 export const gainExperience = (player: Character, amount: number): Character => {

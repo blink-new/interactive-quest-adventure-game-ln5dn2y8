@@ -3,7 +3,8 @@ import { Character, Enemy } from '../types/game';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import { Sword, Shield, Heart, Zap } from 'lucide-react';
+import { Badge } from './ui/badge';
+import { Sword, Shield, Heart, Zap, Crown, Flame, Skull } from 'lucide-react';
 
 interface CombatModalProps {
   isOpen: boolean;
@@ -45,9 +46,23 @@ const CombatModal: React.FC<CombatModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-sm border-primary/20">
         <DialogHeader>
-          <DialogTitle className="font-fantasy text-primary text-center text-xl">
+          <DialogTitle className="font-fantasy text-primary text-center text-xl flex items-center justify-center gap-2">
+            {enemy.isBoss && <Crown className="w-6 h-6 text-accent" />}
             Combat: {player.name} vs {enemy.name}
+            {enemy.isBoss && <Crown className="w-6 h-6 text-accent" />}
           </DialogTitle>
+          {enemy.isBoss && (
+            <div className="text-center space-y-2">
+              <Badge className="bg-accent text-accent-foreground">
+                BOSS BATTLE
+              </Badge>
+              {enemy.bossPhase && enemy.maxPhases && (
+                <Badge variant="outline" className="ml-2">
+                  Phase {enemy.bossPhase}/{enemy.maxPhases}
+                </Badge>
+              )}
+            </div>
+          )}
         </DialogHeader>
 
         <div className="space-y-6">
@@ -110,10 +125,25 @@ const CombatModal: React.FC<CombatModalProps> = ({
             {/* Enemy */}
             <div className="text-center space-y-3">
               <div className={`text-6xl transition-transform duration-300 ${animating && !isPlayerTurn ? 'scale-110' : ''}`}>
-                👹
+                {enemy.isBoss ? (enemy.name.includes('Dragon') ? '🐉' : '💀') : '👹'}
               </div>
               <div>
-                <h3 className="font-fantasy text-lg text-red-400">{enemy.name}</h3>
+                <h3 className={`font-fantasy text-lg ${enemy.isBoss ? 'text-accent' : 'text-red-400'}`}>
+                  {enemy.name}
+                </h3>
+                {enemy.isBoss && enemy.specialAbilities && (
+                  <div className="flex justify-center gap-1 mt-1">
+                    {enemy.specialAbilities.map((ability, index) => (
+                      <div
+                        key={ability.id}
+                        className={`w-2 h-2 rounded-full ${
+                          ability.currentCooldown === 0 ? 'bg-accent' : 'bg-gray-500'
+                        }`}
+                        title={`${ability.name} ${ability.currentCooldown > 0 ? `(${ability.currentCooldown} turns)` : '(Ready)'}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
               
               {/* Enemy Health */}

@@ -12,6 +12,9 @@ import {
   gainExperience,
   useItem,
   equipItem,
+  useBossAbility,
+  updateBossCooldowns,
+  checkBossPhaseTransition,
   GRID_WIDTH,
   GRID_HEIGHT
 } from './utils/gameLogic';
@@ -248,8 +251,40 @@ function App() {
         setCombatState(prev => {
           if (!prev.enemy || prev.enemy.health <= 0) return prev;
           
-          const damage = calculateDamage(prev.enemy, gameState.player);
-          const newLog = [...prev.combatLog, `${prev.enemy.name} attacks you for ${damage} damage!`];
+          let damage = 0;
+          let newLog = [...prev.combatLog];
+          let updatedEnemy = { ...prev.enemy };
+          
+          // Check for boss phase transitions
+          if (updatedEnemy.isBoss) {
+            const phaseTransitionEnemy = checkBossPhaseTransition(updatedEnemy);
+            if (phaseTransitionEnemy.bossPhase !== updatedEnemy.bossPhase) {
+              updatedEnemy = phaseTransitionEnemy;
+              newLog.push(`${updatedEnemy.name} enters Phase ${updatedEnemy.bossPhase}! Power increases!`);
+            }
+          }
+          
+          // Boss special abilities (50% chance to use if available)
+          if (updatedEnemy.isBoss && Math.random() < 0.5) {
+            const bossAction = useBossAbility(updatedEnemy);
+            if (bossAction.ability) {
+              damage = bossAction.damage;
+              newLog.push(bossAction.effect);
+            } else {
+              // Regular attack if no abilities available
+              damage = calculateDamage(updatedEnemy, gameState.player);
+              newLog.push(`${updatedEnemy.name} attacks you for ${damage} damage!`);
+            }
+          } else {
+            // Regular attack
+            damage = calculateDamage(updatedEnemy, gameState.player);
+            newLog.push(`${updatedEnemy.name} attacks you for ${damage} damage!`);
+          }
+          
+          // Update boss cooldowns
+          if (updatedEnemy.isBoss) {
+            updatedEnemy = updateBossCooldowns(updatedEnemy);
+          }
           
           setGameState(gameState => {
             const newPlayer = { ...gameState.player };
@@ -260,20 +295,27 @@ function App() {
               newLog.push('You have been defeated!');
             }
             
+            // Update the enemy in the game state
+            const updatedEnemies = gameState.enemies.map(enemy => 
+              enemy.id === updatedEnemy.id ? updatedEnemy : enemy
+            );
+            
             return {
               ...gameState,
               player: newPlayer,
+              enemies: updatedEnemies,
               message: newPlayer.health <= 0 ? 'Game Over!' : `Took ${damage} damage!`
             };
           });
           
           return {
             ...prev,
+            enemy: updatedEnemy,
             combatLog: newLog,
             isPlayerTurn: true
           };
         });
-      }, 1000);
+      }, 800); // Faster combat for quick gameplay
     }
   }, [combatState, gameState.player]);
 
@@ -342,7 +384,7 @@ function App() {
                     Quest Adventure
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Level {gameState.currentLevel} • {gameState.enemies.length} enemies remaining
+                    Level {gameState.currentLevel} • {gameState.enemies.length} enemies remaining • {gameState.enemies.filter(e => e.isBoss).length} bosses
                   </p>
                 </div>
               </div>

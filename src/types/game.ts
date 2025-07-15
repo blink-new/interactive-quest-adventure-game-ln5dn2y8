@@ -53,6 +53,20 @@ export interface Enemy {
   experience: number;
   gold: number;
   loot: Item[];
+  isBoss?: boolean;
+  specialAbilities?: SpecialAbility[];
+  bossPhase?: number;
+  maxPhases?: number;
+}
+
+export interface SpecialAbility {
+  id: string;
+  name: string;
+  description: string;
+  damage?: number;
+  effect?: 'heal' | 'buff' | 'debuff' | 'stun' | 'poison' | 'rage';
+  cooldown: number;
+  currentCooldown: number;
 }
 
 export interface Quest {

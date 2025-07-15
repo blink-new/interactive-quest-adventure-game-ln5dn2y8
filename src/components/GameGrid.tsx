@@ -11,6 +11,12 @@ const GameGrid: React.FC<GameGridProps> = ({ grid }) => {
       case 'player':
         return '🧙‍♂️';
       case 'enemy':
+        if (cell.content && typeof cell.content === 'object' && 'isBoss' in cell.content) {
+          const enemy = cell.content as any;
+          if (enemy.isBoss) {
+            return enemy.name.includes('Dragon') ? '🐉' : '💀';
+          }
+        }
         return '👹';
       case 'treasure':
         return '💎';
@@ -31,6 +37,12 @@ const GameGrid: React.FC<GameGridProps> = ({ grid }) => {
       case 'player':
         return `${baseClass} player-cell`;
       case 'enemy':
+        if (cell.content && typeof cell.content === 'object' && 'isBoss' in cell.content) {
+          const enemy = cell.content as any;
+          if (enemy.isBoss) {
+            return `${baseClass} boss-cell`;
+          }
+        }
         return `${baseClass} enemy-cell`;
       case 'treasure':
         return `${baseClass} treasure-cell`;
