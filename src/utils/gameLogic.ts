@@ -5,7 +5,7 @@ export const GRID_HEIGHT = 15;
 
 export const createInitialPlayer = (): Character => ({
   id: 'player',
-  name: 'Hero',
+  name: 'Mr Ahmed',
   level: 1,
   health: 100,
   maxHealth: 100,

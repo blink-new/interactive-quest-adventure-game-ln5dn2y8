@@ -26,6 +26,16 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
+    
+    /* Custom colorful variables */
+    --magic-purple: 270 91% 65%;
+    --fire-orange: 25 95% 53%;
+    --ice-blue: 200 100% 70%;
+    --nature-green: 120 60% 50%;
+    --lightning-yellow: 60 100% 50%;
+    --blood-red: 0 100% 50%;
+    --shadow-dark: 240 10% 10%;
+    --light-gold: 45 100% 60%;
   }
 }
 
